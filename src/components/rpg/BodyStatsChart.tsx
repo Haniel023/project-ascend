@@ -1,0 +1,56 @@
+"use client";
+
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+
+export type BodyStatPoint = { date: string; weightKg: number | null };
+
+export function BodyStatsChart({ data }: { data: BodyStatPoint[] }) {
+  const hasAnyData = data.some((d) => d.weightKg != null);
+
+  return (
+    <div>
+      <h3 className="text-sm font-semibold tracking-wide text-zinc-400 uppercase">Weight Trend</h3>
+      {!hasAnyData ? (
+        <p className="mt-2 text-sm text-muted-foreground">
+          No weight history yet -- update your stats on this page to start tracking.
+        </p>
+      ) : (
+        <div className="mt-2 h-56 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+              <CartesianGrid stroke="#2c2c2a" vertical={false} />
+              <XAxis
+                dataKey="date"
+                tick={{ fill: "#898781", fontSize: 11 }}
+                tickLine={false}
+                axisLine={{ stroke: "#383835" }}
+                tickFormatter={(d: string) => d.slice(5)}
+                minTickGap={24}
+              />
+              <YAxis
+                domain={["dataMin - 2", "dataMax + 2"]}
+                tick={{ fill: "#898781", fontSize: 11 }}
+                tickLine={false}
+                axisLine={false}
+                width={36}
+              />
+              <Tooltip
+                contentStyle={{ background: "#1a1a19", border: "1px solid #383835", borderRadius: 8 }}
+                labelStyle={{ color: "#ffffff" }}
+                itemStyle={{ color: "#c3c2b7" }}
+              />
+              <Line
+                type="monotone"
+                dataKey="weightKg"
+                stroke="#9085e9"
+                strokeWidth={2}
+                dot={{ r: 3, fill: "#9085e9" }}
+                connectNulls={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+    </div>
+  );
+}
